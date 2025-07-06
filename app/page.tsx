@@ -6,7 +6,7 @@ import type React from "react"
 import { useState, useRef, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Upload, FileAudio, Download, Loader2 } from "lucide-react"
+import { Upload, FileAudio, Download } from "lucide-react"
 import axios from "axios"
 import pLimit from "p-limit"
 
@@ -14,30 +14,6 @@ interface TranscriptionResult {
   text: string
   confidence?: number
   language?: string
-}
-
-const SAMPLE_RATE = 16000  // 16kHz
-
-// PCM 변환 함수 추가
-async function fileToPCM16kMono(file: File): Promise<ArrayBuffer> {
-  // 1. 파일을 ArrayBuffer로 읽기
-  const arrayBuffer = await file.arrayBuffer();
-
-  // 2. Web Audio API로 디코딩
-  const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
-  const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
-
-  // 3. 모노로 변환 (여러 채널이면 첫 번째 채널만 사용)
-  const channelData = audioBuffer.getChannelData(0);
-
-  // 4. 16bit PCM으로 변환
-  const pcm16 = new Int16Array(channelData.length);
-  for (let i = 0; i < channelData.length; i++) {
-    let s = Math.max(-1, Math.min(1, channelData[i]));
-    pcm16[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
-  }
-
-  return pcm16.buffer;
 }
 
 interface FileTranscription {
