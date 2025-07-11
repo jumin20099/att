@@ -124,7 +124,16 @@ export default function AudioToText() {
         </div>
 
         {/* 업로드 카드 */}
-        <Card className="border-2 border-dashed border-slate-300">
+        <Card
+          className="border-2 border-dashed border-slate-300"
+          onDragOver={e => { e.preventDefault(); e.stopPropagation(); }}
+          onDrop={e => {
+            e.preventDefault(); e.stopPropagation();
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+              handleFiles(e.dataTransfer.files)
+            }
+          }}
+        >
           <CardContent className="p-8">
             <div className="text-center space-y-4">
               <FileAudio className="h-12 w-12 mx-auto text-slate-400" />
